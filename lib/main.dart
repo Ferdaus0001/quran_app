@@ -1915,10 +1915,15 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:string_similarity/string_similarity.dart';
 
+
+import 'auth/forgot_password_screen.dart';
+import 'bootom_nev_bar.dart';
+
 void main() {
-  runApp(const MaterialApp(
+  runApp(  MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: QuranRecitationScreen(),
+    home: ForgotScreen(),
+    // home: QuranRecitationScreen(),
   ));
 }
 
@@ -2132,7 +2137,7 @@ class _QuranRecitationScreenState extends State<QuranRecitationScreen>
                     opacity: opacityList[i],
                     duration: const Duration(milliseconds: 600),
                     child: Text(
-                      word + " ",
+                      "$word ",
                       style: GoogleFonts.amiri(
                         fontSize: isWrong ? 36 : 28,
                         color: isWrong ? Colors.red[900] : Colors.black87,

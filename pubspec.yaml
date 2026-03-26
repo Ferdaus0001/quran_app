@@ -12,9 +12,15 @@ dependencies:
     sdk: flutter
 
   google_fonts: ^6.2.1
+  pinput: ^6.0.2
   speech_to_text: ^7.3.0
+  flutter_svg: ^2.0.10
+  percent_indicator: ^4.2.3
   permission_handler: ^11.3.1
+  flutter_webrtc:
   flutter_sound: ^9.3.12
+
+  flutter_tts: ^3.8.5
 #  flutter_quran_tajwid: ^1.0.3
   flutter_dotenv: ^5.1.0
   google_generative_ai: ^0.4.7
