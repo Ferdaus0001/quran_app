@@ -1909,6 +1909,11 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:quran_app/profiel/add_skills_screen.dart';
+import 'package:quran_app/profiel/cv_upladon_screen.dart';
+import 'package:quran_app/profiel/plang_sceeen.dart';
+import 'package:quran_app/profiel/profile_one_sceen.dart';
+import 'package:quran_app/profiel/work_exprinces_screen.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -1920,9 +1925,9 @@ import 'auth/forgot_password_screen.dart';
 import 'bootom_nev_bar.dart';
 
 void main() {
-  runApp(  MaterialApp(
+  runApp(  const MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: ForgotScreen(),
+    home: ProfileCVUploadScreen(),
     // home: QuranRecitationScreen(),
   ));
 }
