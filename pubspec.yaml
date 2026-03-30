@@ -21,7 +21,14 @@ dependencies:
   dotted_border: ^3.1.0
   image_picker: ^1.2.1      # We'll use it for file picking (works for PDF too)
   file_picker: ^8.1.2
+  barcode_widget: ^2.0.4
+  share_plus: ^10.0.0
+  screenshot: ^3.0.0   # For capturing the ticket as image
+  path_provider: ^2.1.0
+
+  gal: ^2.3.0
   flutter_webrtc:
+  get:
   flutter_sound: ^9.3.12
 
   flutter_tts: ^3.8.5

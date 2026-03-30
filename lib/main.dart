@@ -1909,11 +1909,16 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:quran_app/profiel/add_skills_screen.dart';
 import 'package:quran_app/profiel/cv_upladon_screen.dart';
 import 'package:quran_app/profiel/plang_sceeen.dart';
 import 'package:quran_app/profiel/profile_one_sceen.dart';
 import 'package:quran_app/profiel/work_exprinces_screen.dart';
+import 'package:quran_app/shope_screen/product_deatils_screen.dart';
+import 'package:quran_app/shope_screen/seat_selat_screen.dart';
+import 'package:quran_app/shope_screen/sope_screen.dart';
+import 'package:quran_app/shope_screen/tick_screen.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -1925,9 +1930,9 @@ import 'auth/forgot_password_screen.dart';
 import 'bootom_nev_bar.dart';
 
 void main() {
-  runApp(  const MaterialApp(
+  runApp(  const GetMaterialApp(
     debugShowCheckedModeBanner: false,
-    home: ProfileCVUploadScreen(),
+    home: TicketDownloadScreen(),
     // home: QuranRecitationScreen(),
   ));
 }
