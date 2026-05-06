@@ -1909,33 +1909,2463 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:quran_app/profiel/add_skills_screen.dart';
-import 'package:quran_app/profiel/cv_upladon_screen.dart';
-import 'package:quran_app/profiel/plang_sceeen.dart';
-import 'package:quran_app/profiel/profile_one_sceen.dart';
-import 'package:quran_app/profiel/work_exprinces_screen.dart';
-import 'package:quran_app/shope_screen/product_deatils_screen.dart';
-import 'package:quran_app/shope_screen/seat_selat_screen.dart';
-import 'package:quran_app/shope_screen/sope_screen.dart';
-import 'package:quran_app/shope_screen/tick_screen.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:get/get_navigation/src/root/get_material_app.dart';
+// import 'package:quran_app/profiel/add_skills_screen.dart';
+// import 'package:quran_app/profiel/cv_upladon_screen.dart';
+// import 'package:quran_app/profiel/plang_sceeen.dart';
+// import 'package:quran_app/profiel/profile_one_sceen.dart';
+// import 'package:quran_app/profiel/work_exprinces_screen.dart';
+// import 'package:quran_app/shope_screen/product_deatils_screen.dart';
+// import 'package:quran_app/shope_screen/seat_selat_screen.dart';
+// import 'package:quran_app/shope_screen/sope_screen.dart';
+// import 'package:quran_app/shope_screen/tick_screen.dart';
+// import 'package:speech_to_text/speech_to_text.dart' as stt;
+// import 'package:speech_to_text/speech_recognition_result.dart';
+// import 'package:audioplayers/audioplayers.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:string_similarity/string_similarity.dart';
+//
+//
+// import 'auth/forgot_password_screen.dart';
+// import 'bootom_nev_bar.dart';
+//
+// void main() {
+//   runApp(  const GetMaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     // home: TicketDownloadScreen(),
+//      home: QuranRecitationScreen(),
+//   ));
+// }
+//
+// class QuranRecitationScreen extends StatefulWidget {
+//   const QuranRecitationScreen({super.key});
+//
+//   @override
+//   State<QuranRecitationScreen> createState() => _QuranRecitationScreenState();
+// }
+//
+// class _QuranRecitationScreenState extends State<QuranRecitationScreen>
+//     with SingleTickerProviderStateMixin {
+//   final stt.SpeechToText _speech = stt.SpeechToText();
+//   final AudioPlayer _audioPlayer = AudioPlayer();
+//
+//   bool _speechInitialized = false;
+//   bool isListening = false;
+//   String transcription = "";
+//   String currentMode = 'arabic'; // 'arabic' or 'english'
+//
+//   // সুরা ফাতিহা - আরবি
+//   final List<String> arabicAyat = [
+//     'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+//     'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+//     'الرَّحْمَٰنِ الرَّحِيمَ',
+//     'مَالِكِ يَوْمِ الدِّينِ',
+//     'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+//     'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+//     'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+//   ];
+//
+//   // ইংরেজি word-by-word ট্রান্সলেশন
+//   final List<String> englishAyat = [
+//     'In the name of Allah the Most Gracious the Most Merciful',
+//     'All praise is due to Allah Lord of the worlds',
+//     'The Most Gracious the Most Merciful',
+//     'Master of the Day of Judgment',
+//     'You alone we worship and You alone we ask for help',
+//     'Guide us to the straight path',
+//     'The path of those upon whom You have bestowed favor not of those who have evoked anger or of those who are astray',
+//   ];
+//
+//   late List<String> referenceWords;
+//   late List<double> opacityList;
+//   late List<bool> isWrongList;
+//   late AnimationController _animationController;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _updateReferenceWords();
+//     _animationController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 800),
+//     );
+//     _initSpeech();
+//   }
+//
+//   void _updateReferenceWords() {
+//     final ayatList = currentMode == 'arabic' ? arabicAyat : englishAyat;
+//     referenceWords = ayatList.expand((a) => a.split(' ')).toList();
+//     opacityList = List.generate(referenceWords.length, (_) => 0.2); // শুরুতে ফ্যাকাশে
+//     isWrongList = List.generate(referenceWords.length, (_) => false);
+//   }
+//
+//   Future<void> _initSpeech() async {
+//     _speechInitialized = await _speech.initialize(
+//       onStatus: (status) => print('Status: $status'),
+//       onError: (error) => print('Error: $error'),
+//     );
+//   }
+//
+//   Future<void> startListening() async {
+//     if (!_speechInitialized) await _initSpeech();
+//
+//     await _speech.listen(
+//       onResult: _onResult,
+//       localeId: currentMode == 'arabic' ? 'ar-SA' : 'en-US',
+//       partialResults: true,
+//       listenFor: const Duration(minutes: 10),
+//       pauseFor: const Duration(seconds: 3),
+//     );
+//
+//     setState(() => isListening = true);
+//   }
+//
+//   Future<void> stopListening() async {
+//     await _speech.stop();
+//     setState(() => isListening = false);
+//   }
+//
+//   void _onResult(SpeechRecognitionResult result) {
+//     setState(() {
+//       transcription = result.recognizedWords;
+//     });
+//
+//     _processWords(result.recognizedWords);
+//   }
+//
+//   void _processWords(String spoken) {
+//     if (spoken.isEmpty) return;
+//
+//     final spokenWords = spoken.trim().split(RegExp(r'\s+'));
+//     isWrongList.fillRange(0, isWrongList.length, false);
+//
+//     int matched = 0;
+//     for (int i = 0; i < referenceWords.length && matched < spokenWords.length; i++) {
+//       final target = referenceWords[i].replaceAll(RegExp(r'[ًٌٍَُِّْ]'), '');
+//       final similarity = StringSimilarity.compareTwoStrings(
+//         target.toLowerCase(),
+//         spokenWords[matched].toLowerCase(),
+//       );
+//
+//       setState(() {
+//         opacityList[i] = 1.0; // পড়া হলে একদম ক্লিয়ার
+//
+//         if (similarity < 0.75) {
+//           isWrongList[i] = true;
+//           _audioPlayer.play(AssetSource('sounds/wrong_answer.wav'));
+//           _animationController.forward(from: 0.0); // ভেসে উঠা অ্যানিমেশন
+//         } else {
+//           matched++; // সঠিক হলে পরের ওয়ার্ডে যাও
+//         }
+//       });
+//     }
+//   }
+//
+//   void reset() {
+//     setState(() {
+//       opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//       isWrongList = List.generate(referenceWords.length, (_) => false);
+//       transcription = "";
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         title: const Text("Surah Fatiha real-time check",style: TextStyle(color: Colors.white),),
+//         centerTitle: true,
+//         backgroundColor: const Color(0xFF1D0835),
+//         elevation: 0,
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(24),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.end,
+//           children: [
+//             // মোড সুইচ বাটন
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     setState(() {
+//                       currentMode = 'arabic';
+//                       _updateReferenceWords();
+//                       reset();
+//                     });
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: currentMode == 'arabic' ? Colors.green : Colors.grey,
+//                   ),
+//                   child: const Text("Arabic mode",style: TextStyle(color: Colors.white),),
+//                 ),
+//                 const SizedBox(width: 20),
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     setState(() {
+//                       currentMode = 'english';
+//                       _updateReferenceWords();
+//                       reset();
+//                     });
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: currentMode == 'english' ? Colors.green : Colors.grey,
+//                   ),
+//                   child: const Text("English mode",style: TextStyle(color: Colors.white),),
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(height: 30),
+//             Text(
+//               isListening ? "Listening..." : "Ready",
+//               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//             const SizedBox(height: 20),
+//             Text(
+//               "Listening: $transcription",
+//               textDirection: TextDirection.rtl,
+//               style: const TextStyle(fontSize: 16, color: Colors.grey),
+//             ),
+//             const SizedBox(height: 40),
+//             // শুধু টেক্সট (কোনো কনটেইনার নেই)
+//             Wrap(
+//               alignment: WrapAlignment.end,
+//               spacing: 16,
+//               runSpacing: 20,
+//               children: referenceWords.asMap().entries.map((e) {
+//                 int i = e.key;
+//                 String word = e.value;
+//                 bool isWrong = isWrongList[i];
+//
+//                 return ScaleTransition(
+//                   scale: Tween<double>(begin: 1.0, end: isWrong ? 1.4 : 1.0).animate(
+//                     CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+//                   ),
+//                   child: AnimatedOpacity(
+//                     opacity: opacityList[i],
+//                     duration: const Duration(milliseconds: 600),
+//                     child: Text(
+//                       "$word ",
+//                       style: GoogleFonts.amiri(
+//                         fontSize: isWrong ? 36 : 28,
+//                         color: isWrong ? Colors.red[900] : Colors.black87,
+//                         fontWeight: isWrong ? FontWeight.bold : FontWeight.normal,
+//                       ),
+//                       textDirection: TextDirection.rtl,
+//                     ),
+//                   ),
+//                 );
+//               }).toList(),
+//             ),
+//             const SizedBox(height: 50),
+//
+//             const SizedBox(height: 20),
+//             Center(
+//               child: ElevatedButton(
+//                 onPressed: reset,
+//                 child: const Text("Reset"),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+//       floatingActionButton: ElevatedButton.icon(
+//         onPressed: isListening ? stopListening : startListening,
+//         icon: Icon(isListening ? Icons.stop : Icons.mic, size: 32),
+//         label: Text(
+//           isListening ? "Stop." : "Start.",
+//           style: const TextStyle(fontSize: 18),
+//         ),
+//         style: ElevatedButton.styleFrom(
+//           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+//           backgroundColor: isListening ? Colors.red : Colors.orange,
+//           foregroundColor: Colors.white,
+//         ),
+//       ),
+//     );
+//
+//   }
+//
+//   @override
+//   void dispose() {
+//     _audioPlayer.dispose();
+//     _animationController.dispose();
+//     super.dispose();
+//   }
+// }
+
+
+//
+// import 'package:flutter/material.dart';
+// import 'package:get/get_navigation/src/root/get_material_app.dart';
+// import 'package:speech_to_text/speech_to_text.dart' as stt;
+// import 'package:speech_to_text/speech_recognition_result.dart';
+// import 'package:audioplayers/audioplayers.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:string_similarity/string_similarity.dart';
+//
+// void main() {
+//   runApp(const GetMaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     home: QuranRecitationScreen(),
+//   ));
+// }
+//
+// class QuranRecitationScreen extends StatefulWidget {
+//   const QuranRecitationScreen({super.key});
+//
+//   @override
+//   State<QuranRecitationScreen> createState() => _QuranRecitationScreenState();
+// }
+//
+// class _QuranRecitationScreenState extends State<QuranRecitationScreen>
+//     with SingleTickerProviderStateMixin {
+//   final stt.SpeechToText _speech = stt.SpeechToText();
+//   final AudioPlayer _audioPlayer = AudioPlayer();
+//
+//   bool _speechInitialized = false;
+//   bool isListening = false;
+//   bool _isRestarting = false;
+//   String transcription = "";
+//   String currentMode = 'arabic';
+//
+//   // সুরা ফাতিহা - আরবি
+//   final List<String> arabicAyat = [
+//     'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+//     'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+//     'الرَّحْمَٰنِ الرَّحِيمَ',
+//     'مَالِكِ يَوْمِ الدِّينِ',
+//     'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+//     'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+//     'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+//   ];
+//
+//   // ইংরেজি
+//   final List<String> englishAyat = [
+//     'In the name of Allah the Most Gracious the Most Merciful',
+//     'All praise is due to Allah Lord of the worlds',
+//     'The Most Gracious the Most Merciful',
+//     'Master of the Day of Judgment',
+//     'You alone we worship and You alone we ask for help',
+//     'Guide us to the straight path',
+//     'The path of those upon whom You have bestowed favor not of those who have evoked anger or of those who are astray',
+//   ];
+//
+//   late List<String> referenceWords;
+//   late List<double> opacityList;
+//   late List<bool> isWrongList;
+//   late AnimationController _animationController;
+//   bool _soundPlayed = false;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _updateReferenceWords();
+//     _animationController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 800),
+//     );
+//     _initSpeech();
+//   }
+//
+//   void _updateReferenceWords() {
+//     final ayatList = currentMode == 'arabic' ? arabicAyat : englishAyat;
+//     referenceWords = ayatList.expand((a) => a.split(' ')).toList();
+//     opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//     isWrongList = List.generate(referenceWords.length, (_) => false);
+//   }
+//
+//   Future<void> _initSpeech() async {
+//     _speechInitialized = await _speech.initialize(
+//       onStatus: (status) {
+//         debugPrint('Status: $status');
+//         // mic বন্ধ হলে আবার চালু করো
+//         if ((status == 'done' || status == 'notListening') && isListening && !_isRestarting) {
+//           Future.delayed(const Duration(milliseconds: 300), () {
+//             _restartListening();
+//           });
+//         }
+//       },
+//       onError: (error) {
+//         debugPrint('Error: $error');
+//         // error হলেও restart করো
+//         if (isListening && !_isRestarting) {
+//           Future.delayed(const Duration(milliseconds: 500), () {
+//             _restartListening();
+//           });
+//         }
+//       },
+//     );
+//   }
+//
+//   // ✅ নতুন restart function — real-time এর জন্য মূল সমাধান
+//   Future<void> _restartListening() async {
+//     if (!isListening || _isRestarting) return;
+//     _isRestarting = true;
+//
+//     try {
+//       await _speech.stop();
+//       await Future.delayed(const Duration(milliseconds: 200));
+//
+//       if (!isListening) {
+//         _isRestarting = false;
+//         return;
+//       }
+//
+//       await _speech.listen(
+//         onResult: _onResult,
+//         localeId: currentMode == 'arabic' ? 'ar-SA' : 'en-US',
+//         partialResults: true,
+//         listenFor: const Duration(seconds: 30),
+//         pauseFor: const Duration(seconds: 8),
+//       );
+//     } catch (e) {
+//       debugPrint('Restart error: $e');
+//     } finally {
+//       _isRestarting = false;
+//     }
+//   }
+//
+//   Future<void> startListening() async {
+//     if (!_speechInitialized) await _initSpeech();
+//
+//     setState(() {
+//       isListening = true;
+//       _isRestarting = false;
+//     });
+//
+//     await _speech.listen(
+//       onResult: _onResult,
+//       localeId: currentMode == 'arabic' ? 'ar-SA' : 'en-US',
+//       partialResults: true,
+//       listenFor: const Duration(seconds: 30),
+//       pauseFor: const Duration(seconds: 8),
+//     );
+//   }
+//
+//   Future<void> stopListening() async {
+//     setState(() {
+//       isListening = false;
+//       _isRestarting = false;
+//     });
+//     await _speech.stop();
+//   }
+//
+//   void _onResult(SpeechRecognitionResult result) {
+//     setState(() {
+//       transcription = result.recognizedWords;
+//     });
+//     _processWords(result.recognizedWords);
+//   }
+//
+//   void _processWords(String spoken) {
+//     if (spoken.isEmpty) return;
+//
+//     final spokenWords = spoken.trim().split(RegExp(r'\s+'));
+//
+//     // reset করো
+//     setState(() {
+//       isWrongList.fillRange(0, isWrongList.length, false);
+//       _soundPlayed = false;
+//     });
+//
+//     int matched = 0;
+//     for (int i = 0; i < referenceWords.length && matched < spokenWords.length; i++) {
+//       // Arabic diacritics সম্পূর্ণভাবে remove করো
+//       final target = referenceWords[i].replaceAll(
+//         RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]'),
+//         '',
+//       );
+//
+//       final similarity = StringSimilarity.compareTwoStrings(
+//         target.toLowerCase(),
+//         spokenWords[matched].toLowerCase(),
+//       );
+//
+//       setState(() {
+//         opacityList[i] = 1.0;
+//
+//         if (similarity < 0.75) {
+//           isWrongList[i] = true;
+//           // ✅ একবারই sound বাজবে, বারবার না
+//           if (!_soundPlayed) {
+//             _soundPlayed = true;
+//             _audioPlayer.play(AssetSource('sounds/wrong_answer.wav'));
+//             _animationController.forward(from: 0.0);
+//           }
+//           matched++; // ✅ ভুল হলেও পরের শব্দে যাও
+//         } else {
+//           matched++;
+//         }
+//       });
+//     }
+//   }
+//
+//   void reset() {
+//     setState(() {
+//       opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//       isWrongList = List.generate(referenceWords.length, (_) => false);
+//       transcription = "";
+//       _soundPlayed = false;
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         title: const Text(
+//           "Surah Fatiha Real-time Check",
+//           style: TextStyle(color: Colors.white),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: const Color(0xFF1D0835),
+//         elevation: 0,
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(24),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.end,
+//           children: [
+//             // Mode switch
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     setState(() {
+//                       currentMode = 'arabic';
+//                       _updateReferenceWords();
+//                       reset();
+//                     });
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: currentMode == 'arabic' ? Colors.green : Colors.grey,
+//                   ),
+//                   child: const Text("Arabic", style: TextStyle(color: Colors.white)),
+//                 ),
+//                 const SizedBox(width: 20),
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     setState(() {
+//                       currentMode = 'english';
+//                       _updateReferenceWords();
+//                       reset();
+//                     });
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: currentMode == 'english' ? Colors.green : Colors.grey,
+//                   ),
+//                   child: const Text("English", style: TextStyle(color: Colors.white)),
+//                 ),
+//               ],
+//             ),
+//
+//             const SizedBox(height: 20),
+//
+//             // Status indicator
+//             Center(
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   // ✅ লাইভ indicator dot
+//                   AnimatedContainer(
+//                     duration: const Duration(milliseconds: 400),
+//                     width: 12,
+//                     height: 12,
+//                     decoration: BoxDecoration(
+//                       shape: BoxShape.circle,
+//                       color: isListening ? Colors.red : Colors.grey,
+//                     ),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   Text(
+//                     isListening ? "Listening..." : "Ready",
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.bold,
+//                       color: isListening ? Colors.red : Colors.grey,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//
+//             const SizedBox(height: 16),
+//
+//             // Transcription
+//             Container(
+//               width: double.infinity,
+//               padding: const EdgeInsets.all(12),
+//               decoration: BoxDecoration(
+//                 color: Colors.grey[100],
+//                 borderRadius: BorderRadius.circular(8),
+//               ),
+//               child: Text(
+//                 transcription.isEmpty ? "আপনার পড়া এখানে দেখাবে..." : transcription,
+//                 textDirection: currentMode == 'arabic' ? TextDirection.rtl : TextDirection.ltr,
+//                 style: TextStyle(
+//                   fontSize: 15,
+//                   color: transcription.isEmpty ? Colors.grey : Colors.black87,
+//                 ),
+//               ),
+//             ),
+//
+//             const SizedBox(height: 30),
+//
+//             // Legend
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Container(width: 12, height: 12, color: Colors.red[900]),
+//                 const SizedBox(width: 6),
+//                 const Text("ভুল", style: TextStyle(fontSize: 13)),
+//                 const SizedBox(width: 20),
+//                 Container(width: 12, height: 12, color: Colors.black87),
+//                 const SizedBox(width: 6),
+//                 const Text("সঠিক", style: TextStyle(fontSize: 13)),
+//                 const SizedBox(width: 20),
+//                 Container(width: 12, height: 12, color: Colors.black26),
+//                 const SizedBox(width: 6),
+//                 const Text("পড়া হয়নি", style: TextStyle(fontSize: 13)),
+//               ],
+//             ),
+//
+//             const SizedBox(height: 20),
+//
+//             // Quran text
+//             Wrap(
+//               alignment: WrapAlignment.end,
+//               spacing: 16,
+//               runSpacing: 20,
+//               children: referenceWords.asMap().entries.map((e) {
+//                 int i = e.key;
+//                 String word = e.value;
+//                 bool isWrong = isWrongList[i];
+//
+//                 return ScaleTransition(
+//                   scale: Tween<double>(
+//                     begin: 1.0,
+//                     end: isWrong ? 1.4 : 1.0,
+//                   ).animate(CurvedAnimation(
+//                     parent: _animationController,
+//                     curve: Curves.easeInOut,
+//                   )),
+//                   child: AnimatedOpacity(
+//                     opacity: opacityList[i],
+//                     duration: const Duration(milliseconds: 600),
+//                     child: Text(
+//                       word,
+//                       style: GoogleFonts.amiri(
+//                         fontSize: isWrong ? 36 : 28,
+//                         color: isWrong ? Colors.red[900] : Colors.black87,
+//                         fontWeight: isWrong ? FontWeight.bold : FontWeight.normal,
+//                       ),
+//                       textDirection: TextDirection.rtl,
+//                     ),
+//                   ),
+//                 );
+//               }).toList(),
+//             ),
+//
+//             const SizedBox(height: 80),
+//
+//             Center(
+//               child: ElevatedButton.icon(
+//                 onPressed: reset,
+//                 icon: const Icon(Icons.refresh),
+//                 label: const Text("Reset"),
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: const Color(0xFF1D0835),
+//                   foregroundColor: Colors.white,
+//                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+//       floatingActionButton: ElevatedButton.icon(
+//         onPressed: isListening ? stopListening : startListening,
+//         icon: Icon(isListening ? Icons.stop : Icons.mic, size: 28),
+//         label: Text(
+//           isListening ? "Stop" : "Start Reciting",
+//           style: const TextStyle(fontSize: 16),
+//         ),
+//         style: ElevatedButton.styleFrom(
+//           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+//           backgroundColor: isListening ? Colors.red : const Color(0xFF1D0835),
+//           foregroundColor: Colors.white,
+//           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _audioPlayer.dispose();
+//     _animationController.dispose();
+//     super.dispose();
+//   }
+// }
+
+//
+//
+// import 'package:flutter/material.dart';
+// import 'package:get/get_navigation/src/root/get_material_app.dart';
+// import 'package:speech_to_text/speech_to_text.dart' as stt;
+// import 'package:speech_to_text/speech_recognition_result.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+//
+// void main() {
+//   runApp(const GetMaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     home: QuranRecitationScreen(),
+//   ));
+// }
+//
+// class QuranRecitationScreen extends StatefulWidget {
+//   const QuranRecitationScreen({super.key});
+//
+//   @override
+//   State<QuranRecitationScreen> createState() => _QuranRecitationScreenState();
+// }
+//
+// class _QuranRecitationScreenState extends State<QuranRecitationScreen>
+//     with SingleTickerProviderStateMixin {
+//
+//   // ✅ এখানে আপনার Gemini API Key দিন
+//   static const String _geminiApiKey = 'AIzaSyA59Hp4CmEhIXAmsb9Sb6O7BNrUlcjxTCo';
+//
+//   final stt.SpeechToText _speech = stt.SpeechToText();
+//   bool _speechInitialized = false;
+//   bool isListening = false;
+//   bool _isRestarting = false;
+//   bool _isAnalyzing = false;
+//   String transcription = "";
+//   String feedbackMessage = "";
+//   String currentMode = 'arabic';
+//
+//   final List<String> arabicAyat = [
+//     'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+//     'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+//     'الرَّحْمَٰنِ الرَّحِيمَ',
+//     'مَالِكِ يَوْمِ الدِّينِ',
+//     'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+//     'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+//     'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+//   ];
+//
+//   final List<String> englishAyat = [
+//     'In the name of Allah the Most Gracious the Most Merciful',
+//     'All praise is due to Allah Lord of the worlds',
+//     'The Most Gracious the Most Merciful',
+//     'Master of the Day of Judgment',
+//     'You alone we worship and You alone we ask for help',
+//     'Guide us to the straight path',
+//     'The path of those upon whom You have bestowed favor not of those who have evoked anger or of those who are astray',
+//   ];
+//
+//   late List<String> referenceWords;
+//   late List<double> opacityList;
+//   late List<bool> isWrongList;
+//   late List<String> wordFeedback;
+//   late AnimationController _animationController;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _updateReferenceWords();
+//     _animationController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 800),
+//     );
+//     _initSpeech();
+//   }
+//
+//   void _updateReferenceWords() {
+//     final ayatList = currentMode == 'arabic' ? arabicAyat : englishAyat;
+//     referenceWords = ayatList.expand((a) => a.split(' ')).toList();
+//     opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//     isWrongList = List.generate(referenceWords.length, (_) => false);
+//     wordFeedback = List.generate(referenceWords.length, (_) => '');
+//   }
+//
+//   Future<void> _initSpeech() async {
+//     _speechInitialized = await _speech.initialize(
+//       onStatus: (status) {
+//         debugPrint('Status: $status');
+//         if ((status == 'done' || status == 'notListening') && isListening && !_isRestarting) {
+//           Future.delayed(const Duration(milliseconds: 300), _restartListening);
+//         }
+//       },
+//       onError: (error) {
+//         debugPrint('Error: $error');
+//         if (isListening && !_isRestarting) {
+//           Future.delayed(const Duration(milliseconds: 500), _restartListening);
+//         }
+//       },
+//     );
+//   }
+//
+//   Future<void> _restartListening() async {
+//     if (!isListening || _isRestarting) return;
+//     _isRestarting = true;
+//     try {
+//       await _speech.stop();
+//       await Future.delayed(const Duration(milliseconds: 200));
+//       if (!isListening) { _isRestarting = false; return; }
+//       await _speech.listen(
+//         onResult: _onResult,
+//         localeId: currentMode == 'arabic' ? 'ar-SA' : 'en-US',
+//         partialResults: true,
+//         listenFor: const Duration(seconds: 30),
+//         pauseFor: const Duration(seconds: 8),
+//       );
+//     } catch (e) {
+//       debugPrint('Restart error: $e');
+//     } finally {
+//       _isRestarting = false;
+//     }
+//   }
+//
+//   Future<void> startListening() async {
+//     if (!_speechInitialized) await _initSpeech();
+//     setState(() { isListening = true; _isRestarting = false; });
+//     await _speech.listen(
+//       onResult: _onResult,
+//       localeId: currentMode == 'arabic' ? 'ar-SA' : 'en-US',
+//       partialResults: true,
+//       listenFor: const Duration(seconds: 30),
+//       pauseFor: const Duration(seconds: 8),
+//     );
+//   }
+//
+//   Future<void> stopListening() async {
+//     setState(() { isListening = false; _isRestarting = false; });
+//     await _speech.stop();
+//   }
+//
+//   void _onResult(SpeechRecognitionResult result) {
+//     setState(() => transcription = result.recognizedWords);
+//     // শুধু final result এ Gemini কে call করো
+//     if (result.finalResult && transcription.isNotEmpty) {
+//       _analyzeWithGemini(transcription);
+//     }
+//   }
+//
+//   // ✅ Gemini AI দিয়ে Arabic উচ্চারণ চেক
+//   Future<void> _analyzeWithGemini(String spokenText) async {
+//     if (_isAnalyzing) return;
+//     setState(() => _isAnalyzing = true);
+//
+//     final fullAyat = arabicAyat.join(' ');
+//
+//     final prompt = currentMode == 'arabic'
+//         ? '''
+// আমি সূরা ফাতিহা পড়ছি। মূল আরবি টেক্সট হলো:
+// "$fullAyat"
+//
+// আমি পড়েছি (Speech-to-Text থেকে):
+// "$spokenText"
+//
+// তুমি একজন Quran tajweed expert। এই কাজগুলো করো:
+// 1. প্রতিটি শব্দ মিলিয়ে দেখো
+// 2. কোন শব্দগুলো ভুল উচ্চারণ হয়েছে সেগুলো চিহ্নিত করো
+// 3. JSON format এ উত্তর দাও এভাবে:
+// {
+//   "wrongWords": ["ভুল শব্দ ১", "ভুল শব্দ ২"],
+//   "feedback": "সংক্ষিপ্ত বাংলায় feedback",
+//   "score": 85
+// }
+// শুধু JSON দাও, অন্য কিছু না।
+// '''
+//         : '''
+// Surah Fatiha English transliteration:
+// "${englishAyat.join(' ')}"
+//
+// User recited: "$spokenText"
+//
+// Compare word by word and return JSON:
+// {
+//   "wrongWords": ["wrong word 1", "wrong word 2"],
+//   "feedback": "Brief feedback in English",
+//   "score": 85
+// }
+// Return JSON only.
+// ''';
+//
+//     try {
+//       final response = await http.post(
+//         Uri.parse(
+//           'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$_geminiApiKey',
+//         ),
+//         headers: {'Content-Type': 'application/json'},
+//         body: jsonEncode({
+//           "contents": [
+//             {
+//               "parts": [
+//                 {"text": prompt}
+//               ]
+//             }
+//           ],
+//           "generationConfig": {
+//             "temperature": 0.1,
+//             "maxOutputTokens": 500,
+//           }
+//         }),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         final text = data['candidates'][0]['content']['parts'][0]['text'] as String;
+//
+//         // JSON parse করো
+//         final cleanJson = text.replaceAll('```json', '').replaceAll('```', '').trim();
+//         final result = jsonDecode(cleanJson);
+//
+//         final wrongWords = List<String>.from(result['wrongWords'] ?? []);
+//         final feedback = result['feedback'] ?? '';
+//         final score = result['score'] ?? 0;
+//
+//         _applyGeminiFeedback(wrongWords, feedback, score);
+//       }
+//     } catch (e) {
+//       debugPrint('Gemini error: $e');
+//       setState(() => feedbackMessage = "AI analysis failed. Check internet.");
+//     } finally {
+//       setState(() => _isAnalyzing = false);
+//     }
+//   }
+//
+//   void _applyGeminiFeedback(List<String> wrongWords, String feedback, int score) {
+//     setState(() {
+//       feedbackMessage = "Score: $score/100 — $feedback";
+//       isWrongList.fillRange(0, isWrongList.length, false);
+//
+//       for (int i = 0; i < referenceWords.length; i++) {
+//         opacityList[i] = 1.0;
+//         final word = referenceWords[i].replaceAll(
+//           RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]'),
+//           '',
+//         );
+//         // Gemini যে শব্দগুলো ভুল বলেছে সেগুলো লাল করো
+//         for (final wrong in wrongWords) {
+//           final cleanWrong = wrong.replaceAll(
+//             RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]'),
+//             '',
+//           );
+//           if (word.contains(cleanWrong) || cleanWrong.contains(word)) {
+//             isWrongList[i] = true;
+//             if (isWrongList[i]) _animationController.forward(from: 0.0);
+//           }
+//         }
+//       }
+//     });
+//   }
+//
+//   void reset() {
+//     setState(() {
+//       opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//       isWrongList = List.generate(referenceWords.length, (_) => false);
+//       wordFeedback = List.generate(referenceWords.length, (_) => '');
+//       transcription = "";
+//       feedbackMessage = "";
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         title: const Text("Surah Fatiha AI Check", style: TextStyle(color: Colors.white)),
+//         centerTitle: true,
+//         backgroundColor: const Color(0xFF1D0835),
+//         elevation: 0,
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(24),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.end,
+//           children: [
+//             // Mode switch
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 ElevatedButton(
+//                   onPressed: () => setState(() {
+//                     currentMode = 'arabic';
+//                     _updateReferenceWords();
+//                     reset();
+//                   }),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: currentMode == 'arabic' ? Colors.green : Colors.grey,
+//                   ),
+//                   child: const Text("Arabic", style: TextStyle(color: Colors.white)),
+//                 ),
+//                 const SizedBox(width: 20),
+//                 ElevatedButton(
+//                   onPressed: () => setState(() {
+//                     currentMode = 'english';
+//                     _updateReferenceWords();
+//                     reset();
+//                   }),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: currentMode == 'english' ? Colors.green : Colors.grey,
+//                   ),
+//                   child: const Text("English", style: TextStyle(color: Colors.white)),
+//                 ),
+//               ],
+//             ),
+//
+//             const SizedBox(height: 20),
+//
+//             // Status
+//             Center(
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   AnimatedContainer(
+//                     duration: const Duration(milliseconds: 400),
+//                     width: 12, height: 12,
+//                     decoration: BoxDecoration(
+//                       shape: BoxShape.circle,
+//                       color: isListening ? Colors.red : Colors.grey,
+//                     ),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   Text(
+//                     _isAnalyzing ? "AI analyzing..." : isListening ? "Listening..." : "Ready",
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.bold,
+//                       color: _isAnalyzing ? Colors.orange : isListening ? Colors.red : Colors.grey,
+//                     ),
+//                   ),
+//                   if (_isAnalyzing) ...[
+//                     const SizedBox(width: 8),
+//                     const SizedBox(
+//                       width: 14, height: 14,
+//                       child: CircularProgressIndicator(strokeWidth: 2),
+//                     ),
+//                   ]
+//                 ],
+//               ),
+//             ),
+//
+//             const SizedBox(height: 16),
+//
+//             // Transcription box
+//             Container(
+//               width: double.infinity,
+//               padding: const EdgeInsets.all(12),
+//               decoration: BoxDecoration(
+//                 color: Colors.grey[100],
+//                 borderRadius: BorderRadius.circular(8),
+//               ),
+//               child: Text(
+//                 transcription.isEmpty ? "আপনার পড়া এখানে দেখাবে..." : transcription,
+//                 textDirection: currentMode == 'arabic' ? TextDirection.rtl : TextDirection.ltr,
+//                 style: TextStyle(
+//                   fontSize: 15,
+//                   color: transcription.isEmpty ? Colors.grey : Colors.black87,
+//                 ),
+//               ),
+//             ),
+//
+//             const SizedBox(height: 12),
+//
+//             // ✅ Gemini AI feedback box
+//             if (feedbackMessage.isNotEmpty)
+//               Container(
+//                 width: double.infinity,
+//                 padding: const EdgeInsets.all(12),
+//                 decoration: BoxDecoration(
+//                   color: feedbackMessage.contains('Score: 9') || feedbackMessage.contains('Score: 10')
+//                       ? Colors.green[50]
+//                       : Colors.orange[50],
+//                   borderRadius: BorderRadius.circular(8),
+//                   border: Border.all(
+//                     color: feedbackMessage.contains('Score: 9') || feedbackMessage.contains('Score: 10')
+//                         ? Colors.green
+//                         : Colors.orange,
+//                   ),
+//                 ),
+//                 child: Text(
+//                   feedbackMessage,
+//                   style: const TextStyle(fontSize: 14),
+//                   textDirection: TextDirection.ltr,
+//                 ),
+//               ),
+//
+//             const SizedBox(height: 20),
+//
+//             // Legend
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Container(width: 12, height: 12, color: Colors.red[900]),
+//                 const SizedBox(width: 6),
+//                 const Text("ভুল", style: TextStyle(fontSize: 13)),
+//                 const SizedBox(width: 20),
+//                 Container(width: 12, height: 12, color: Colors.black87),
+//                 const SizedBox(width: 6),
+//                 const Text("সঠিক", style: TextStyle(fontSize: 13)),
+//                 const SizedBox(width: 20),
+//                 Container(width: 12, height: 12, color: Colors.black26),
+//                 const SizedBox(width: 6),
+//                 const Text("পড়া হয়নি", style: TextStyle(fontSize: 13)),
+//               ],
+//             ),
+//
+//             const SizedBox(height: 20),
+//
+//             // Quran text
+//             Wrap(
+//               alignment: WrapAlignment.end,
+//               spacing: 16,
+//               runSpacing: 20,
+//               children: referenceWords.asMap().entries.map((e) {
+//                 int i = e.key;
+//                 String word = e.value;
+//                 bool isWrong = isWrongList[i];
+//
+//                 return ScaleTransition(
+//                   scale: Tween<double>(begin: 1.0, end: isWrong ? 1.3 : 1.0).animate(
+//                     CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+//                   ),
+//                   child: AnimatedOpacity(
+//                     opacity: opacityList[i],
+//                     duration: const Duration(milliseconds: 600),
+//                     child: Text(
+//                       word,
+//                       style: GoogleFonts.amiri(
+//                         fontSize: isWrong ? 34 : 28,
+//                         color: isWrong ? Colors.red[900] : Colors.black87,
+//                         fontWeight: isWrong ? FontWeight.bold : FontWeight.normal,
+//                       ),
+//                       textDirection: TextDirection.rtl,
+//                     ),
+//                   ),
+//                 );
+//               }).toList(),
+//             ),
+//
+//             const SizedBox(height: 80),
+//
+//             Center(
+//               child: ElevatedButton.icon(
+//                 onPressed: reset,
+//                 icon: const Icon(Icons.refresh),
+//                 label: const Text("Reset"),
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: const Color(0xFF1D0835),
+//                   foregroundColor: Colors.white,
+//                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+//       floatingActionButton: ElevatedButton.icon(
+//         onPressed: isListening ? stopListening : startListening,
+//         icon: Icon(isListening ? Icons.stop : Icons.mic, size: 28),
+//         label: Text(
+//           isListening ? "Stop" : "Start Reciting",
+//           style: const TextStyle(fontSize: 16),
+//         ),
+//         style: ElevatedButton.styleFrom(
+//           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+//           backgroundColor: isListening ? Colors.red : const Color(0xFF1D0835),
+//           foregroundColor: Colors.white,
+//           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _animationController.dispose();
+//     super.dispose();
+//   }
+// }
+
+//
+// import 'dart:convert';
+// import 'dart:io';
+// import 'package:flutter/material.dart';
+// import 'package:get/get_navigation/src/root/get_material_app.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:path_provider/path_provider.dart';
+// import 'package:flutter_sound/flutter_sound.dart';
+// import 'package:permission_handler/permission_handler.dart';
+//
+// void main() {
+//   runApp(const GetMaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     home: QuranRecitationScreen(),
+//   ));
+// }
+//
+// class TajweedResult {
+//   final List<String> wrongWords;
+//   final String transcribed;
+//   final int score;
+//   final Map<String, String> rulesFeedback;
+//
+//   TajweedResult({
+//     required this.wrongWords,
+//     required this.transcribed,
+//     required this.score,
+//     required this.rulesFeedback,
+//   });
+// }
+//
+// class QuranRecitationScreen extends StatefulWidget {
+//   const QuranRecitationScreen({super.key});
+//
+//   @override
+//   State<QuranRecitationScreen> createState() => _QuranRecitationScreenState();
+// }
+//
+// class _QuranRecitationScreenState extends State<QuranRecitationScreen>
+//     with SingleTickerProviderStateMixin {
+//
+//   static const String _geminiApiKey = 'AIzaSyA59Hp4CmEhIXAmsb9Sb6O7BNrUlcjxTCoুুুু';
+//
+//   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+//   bool _recorderInitialized = false;
+//   bool isRecording = false;
+//   bool _isAnalyzing = false;
+//   TajweedResult? _lastResult;
+//   String statusMessage = "";
+//
+//   late AnimationController _animationController;
+//
+//   final List<String> arabicAyat = [
+//     'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+//     'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+//     'الرَّحْمَٰنِ الرَّحِيمَ',
+//     'مَالِكِ يَوْمِ الدِّينِ',
+//     'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+//     'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+//     'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+//   ];
+//
+//   late List<String> referenceWords;
+//   late List<double> opacityList;
+//   late List<bool> isWrongList;
+//   String? _recordedFilePath;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _updateReferenceWords();
+//     _animationController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 800),
+//     );
+//     _initRecorder();
+//   }
+//
+//   void _updateReferenceWords() {
+//     referenceWords = arabicAyat.expand((a) => a.split(' ')).toList();
+//     opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//     isWrongList = List.generate(referenceWords.length, (_) => false);
+//   }
+//
+//   Future<void> _initRecorder() async {
+//     final status = await Permission.microphone.request();
+//     if (!status.isGranted) {
+//       setState(() => statusMessage = "Microphone permission দিন!");
+//       return;
+//     }
+//     await _recorder.openRecorder();
+//     setState(() => _recorderInitialized = true);
+//   }
+//
+//   Future<void> startRecording() async {
+//     if (!_recorderInitialized) {
+//       await _initRecorder();
+//       return;
+//     }
+//     final dir = await getTemporaryDirectory();
+//     _recordedFilePath = '${dir.path}/quran_recitation.aac';
+//
+//     await _recorder.startRecorder(
+//       toFile: _recordedFilePath,
+//       codec: Codec.aacADTS,
+//     );
+//
+//     setState(() {
+//       isRecording = true;
+//       _lastResult = null;
+//       statusMessage = "";
+//       opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//       isWrongList = List.generate(referenceWords.length, (_) => false);
+//     });
+//   }
+//
+//   Future<void> stopRecordingAndAnalyze() async {
+//     await _recorder.stopRecorder();
+//     setState(() {
+//       isRecording = false;
+//       _isAnalyzing = true;
+//       statusMessage = "Gemini AI analyzing tajweed...";
+//     });
+//     if (_recordedFilePath != null) {
+//       await _analyzeWithGemini(_recordedFilePath!);
+//     }
+//   }
+//
+//   Future<void> _analyzeWithGemini(String audioPath) async {
+//     try {
+//       final audioFile = File(audioPath);
+//       if (!await audioFile.exists()) {
+//         setState(() {
+//           statusMessage = "Audio file পাওয়া যায়নি!";
+//           _isAnalyzing = false;
+//         });
+//         return;
+//       }
+//
+//       final audioBytes = await audioFile.readAsBytes();
+//       final audioBase64 = base64Encode(audioBytes);
+//       final fullAyat = arabicAyat.join(' ');
+//
+//       // ✅ Gemini কে detailed tajweed expert হিসেবে prompt করা হচ্ছে
+//       const prompt = '''
+// You are an expert Quran tajweed teacher. I have recited Surah Al-Fatiha.
+//
+// The correct Arabic text is:
+// "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ الرَّحْمَٰنِ الرَّحِيمَ مَالِكِ يَوْمِ الدِّينِ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ"
+//
+// Listen to the audio carefully and analyze these 6 tajweed rules:
+//
+// 1. MAKHARIJ: Are letters pronounced from correct throat/mouth positions?
+// 2. SIFAAT: Are heavy letters (ص ض ط ظ ق) thick and light letters thin?
+// 3. MADD: Are long vowels (ا و ي) stretched properly for 2+ counts?
+// 4. GHUNNAH: Is nasal sound correct for ن and م rules?
+// 5. WAQF: Are stops made at correct places?
+// 6. TARTEEL: Is the pace slow and measured, not rushed?
+//
+// Return ONLY this JSON (no extra text):
+// {
+//   "transcribed": "what was recited in Arabic",
+//   "wrongWords": ["Arabic words with mistakes"],
+//   "score": 85,
+//   "rules": {
+//     "makharij": "feedback on letter pronunciation",
+//     "sifaat": "feedback on heavy/light letters",
+//     "madd": "feedback on long vowels",
+//     "ghunnah": "feedback on nasal sounds",
+//     "waqf": "feedback on stopping",
+//     "tarteel": "feedback on pace"
+//   }
+// }
+// ''';
+//
+//       final response = await http.post(
+//         Uri.parse(
+//           'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$_geminiApiKey',
+//         ),
+//         headers: {'Content-Type': 'application/json'},
+//         body: jsonEncode({
+//           "contents": [
+//             {
+//               "parts": [
+//                 {
+//                   "inline_data": {
+//                     "mime_type": "audio/aac",
+//                     "data": audioBase64,
+//                   }
+//                 },
+//                 {"text": prompt}
+//               ]
+//             }
+//           ],
+//           "generationConfig": {
+//             "temperature": 0.1,
+//             "maxOutputTokens": 1500,
+//           }
+//         }),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         final text =
+//         data['candidates'][0]['content']['parts'][0]['text'] as String;
+//
+//         final cleanJson =
+//         text.replaceAll('```json', '').replaceAll('```', '').trim();
+//         final result = jsonDecode(cleanJson);
+//
+//         final wrongWords = List<String>.from(result['wrongWords'] ?? []);
+//         final score = (result['score'] ?? 0) as int;
+//         final transcribed = result['transcribed'] ?? '';
+//         final rules = Map<String, String>.from(
+//           (result['rules'] as Map).map(
+//                 (k, v) => MapEntry(k.toString(), v.toString()),
+//           ),
+//         );
+//
+//         final tajweedResult = TajweedResult(
+//           wrongWords: wrongWords,
+//           transcribed: transcribed,
+//           score: score,
+//           rulesFeedback: rules,
+//         );
+//
+//         _applyResult(tajweedResult);
+//       } else {
+//         final errorData = jsonDecode(response.body);
+//         setState(() {
+//           statusMessage = "❌ API Error: ${errorData['error']['message']}";
+//           _isAnalyzing = false;
+//         });
+//       }
+//     } catch (e) {
+//       setState(() {
+//         statusMessage = "❌ Error: $e";
+//         _isAnalyzing = false;
+//       });
+//     }
+//   }
+//
+//   void _applyResult(TajweedResult result) {
+//     setState(() {
+//       _isAnalyzing = false;
+//       _lastResult = result;
+//       statusMessage = "";
+//
+//       isWrongList.fillRange(0, isWrongList.length, false);
+//
+//       for (int i = 0; i < referenceWords.length; i++) {
+//         opacityList[i] = 1.0;
+//
+//         final cleanRef = _removeHarakat(referenceWords[i]);
+//
+//         for (final wrong in result.wrongWords) {
+//           final cleanWrong = _removeHarakat(wrong);
+//           if (cleanRef.isNotEmpty &&
+//               cleanWrong.isNotEmpty &&
+//               (cleanRef.contains(cleanWrong) || cleanWrong.contains(cleanRef))) {
+//             isWrongList[i] = true;
+//           }
+//         }
+//
+//         if (isWrongList[i]) {
+//           _animationController.forward(from: 0.0);
+//         }
+//       }
+//     });
+//   }
+//
+//   String _removeHarakat(String text) {
+//     return text.replaceAll(
+//       RegExp(
+//           r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]'),
+//       '',
+//     );
+//   }
+//
+//   void reset() {
+//     setState(() {
+//       opacityList = List.generate(referenceWords.length, (_) => 0.2);
+//       isWrongList = List.generate(referenceWords.length, (_) => false);
+//       _lastResult = null;
+//       statusMessage = "";
+//     });
+//   }
+//
+//   // Score এর রং
+//   Color _scoreColor(int score) {
+//     if (score >= 90) return Colors.green;
+//     if (score >= 70) return Colors.orange;
+//     return Colors.red;
+//   }
+//
+//   String _scoreEmoji(int score) {
+//     if (score >= 90) return "🟢";
+//     if (score >= 70) return "🟡";
+//     return "🔴";
+//   }
+//
+//   // Rule এর icon
+//   IconData _ruleIcon(String rule) {
+//     switch (rule) {
+//       case 'makharij': return Icons.record_voice_over;
+//       case 'sifaat': return Icons.tune;
+//       case 'madd': return Icons.linear_scale;
+//       case 'ghunnah': return Icons.air;
+//       case 'waqf': return Icons.pause_circle_outline;
+//       case 'tarteel': return Icons.speed;
+//       default: return Icons.check_circle_outline;
+//     }
+//   }
+//
+//   String _ruleTitle(String rule) {
+//     switch (rule) {
+//       case 'makharij': return "Makharij — Letter sounds";
+//       case 'sifaat': return "Sifaat — Heavy/Light letters";
+//       case 'madd': return "Madd — Long vowels";
+//       case 'ghunnah': return "Ghunnah — Nasal sounds";
+//       case 'waqf': return "Waqf — Stopping rules";
+//       case 'tarteel': return "Tarteel — Pace";
+//       default: return rule;
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         title: const Text("Surah Fatiha Tajweed AI",
+//             style: TextStyle(color: Colors.white)),
+//         centerTitle: true,
+//         backgroundColor: const Color(0xFF1D0835),
+//         elevation: 0,
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(20),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.end,
+//           children: [
+//
+//             // ── Status bar ──
+//             Center(
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   AnimatedContainer(
+//                     duration: const Duration(milliseconds: 400),
+//                     width: 14, height: 14,
+//                     decoration: BoxDecoration(
+//                       shape: BoxShape.circle,
+//                       color: isRecording
+//                           ? Colors.red
+//                           : _isAnalyzing
+//                           ? Colors.orange
+//                           : Colors.green,
+//                     ),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   Text(
+//                     isRecording
+//                         ? "Recording... (Stop when done)"
+//                         : _isAnalyzing
+//                         ? "AI Analyzing Tajweed..."
+//                         : "Ready to recite",
+//                     style: TextStyle(
+//                       fontSize: 15,
+//                       fontWeight: FontWeight.bold,
+//                       color: isRecording
+//                           ? Colors.red
+//                           : _isAnalyzing
+//                           ? Colors.orange
+//                           : Colors.green,
+//                     ),
+//                   ),
+//                   if (_isAnalyzing) ...[
+//                     const SizedBox(width: 8),
+//                     const SizedBox(
+//                       width: 14, height: 14,
+//                       child: CircularProgressIndicator(strokeWidth: 2),
+//                     ),
+//                   ]
+//                 ],
+//               ),
+//             ),
+//
+//             if (statusMessage.isNotEmpty) ...[
+//               const SizedBox(height: 8),
+//               Center(
+//                 child: Text(statusMessage,
+//                     style: const TextStyle(color: Colors.red, fontSize: 13)),
+//               ),
+//             ],
+//
+//             const SizedBox(height: 20),
+//
+//             // ── Score card ──
+//             if (_lastResult != null) ...[
+//               Center(
+//                 child: Container(
+//                   padding: const EdgeInsets.symmetric(
+//                       horizontal: 32, vertical: 16),
+//                   decoration: BoxDecoration(
+//                     color: _scoreColor(_lastResult!.score).withOpacity(0.1),
+//                     borderRadius: BorderRadius.circular(16),
+//                     border: Border.all(
+//                         color: _scoreColor(_lastResult!.score), width: 2),
+//                   ),
+//                   child: Column(
+//                     children: [
+//                       Text(
+//                         "${_scoreEmoji(_lastResult!.score)} ${_lastResult!.score}/100",
+//                         style: TextStyle(
+//                           fontSize: 32,
+//                           fontWeight: FontWeight.bold,
+//                           color: _scoreColor(_lastResult!.score),
+//                         ),
+//                       ),
+//                       Text(
+//                         _lastResult!.score >= 90
+//                             ? "Excellent recitation!"
+//                             : _lastResult!.score >= 70
+//                             ? "Good, keep practicing"
+//                             : "Needs improvement",
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           color: _scoreColor(_lastResult!.score),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(height: 20),
+//             ],
+//
+//             // ── Legend ──
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Container(width: 12, height: 12, color: Colors.red[900]),
+//                 const SizedBox(width: 6),
+//                 const Text("ভুল", style: TextStyle(fontSize: 13)),
+//                 const SizedBox(width: 20),
+//                 Container(width: 12, height: 12, color: Colors.black87),
+//                 const SizedBox(width: 6),
+//                 const Text("সঠিক", style: TextStyle(fontSize: 13)),
+//                 const SizedBox(width: 20),
+//                 Container(width: 12, height: 12, color: Colors.black26),
+//                 const SizedBox(width: 6),
+//                 const Text("পড়া হয়নি", style: TextStyle(fontSize: 13)),
+//               ],
+//             ),
+//
+//             const SizedBox(height: 20),
+//
+//             // ── Quran text ──
+//             Container(
+//               width: double.infinity,
+//               padding: const EdgeInsets.all(16),
+//               decoration: BoxDecoration(
+//                 color: const Color(0xFFF8F4EC),
+//                 borderRadius: BorderRadius.circular(12),
+//                 border: Border.all(color: const Color(0xFFD4A853), width: 1),
+//               ),
+//               child: Wrap(
+//                 alignment: WrapAlignment.end,
+//                 spacing: 12,
+//                 runSpacing: 16,
+//                 children: referenceWords.asMap().entries.map((e) {
+//                   int i = e.key;
+//                   String word = e.value;
+//                   bool isWrong = isWrongList[i];
+//
+//                   return ScaleTransition(
+//                     scale: Tween<double>(
+//                       begin: 1.0,
+//                       end: isWrong ? 1.3 : 1.0,
+//                     ).animate(CurvedAnimation(
+//                       parent: _animationController,
+//                       curve: Curves.easeInOut,
+//                     )),
+//                     child: AnimatedOpacity(
+//                       opacity: opacityList[i],
+//                       duration: const Duration(milliseconds: 600),
+//                       child: Container(
+//                         padding: isWrong
+//                             ? const EdgeInsets.symmetric(
+//                             horizontal: 6, vertical: 2)
+//                             : EdgeInsets.zero,
+//                         decoration: isWrong
+//                             ? BoxDecoration(
+//                           color: Colors.red[50],
+//                           borderRadius: BorderRadius.circular(6),
+//                           border: Border.all(color: Colors.red[300]!),
+//                         )
+//                             : null,
+//                         child: Text(
+//                           word,
+//                           style: GoogleFonts.amiri(
+//                             fontSize: isWrong ? 32 : 28,
+//                             color:
+//                             isWrong ? Colors.red[900] : Colors.black87,
+//                             fontWeight: isWrong
+//                                 ? FontWeight.bold
+//                                 : FontWeight.normal,
+//                           ),
+//                           textDirection: TextDirection.rtl,
+//                         ),
+//                       ),
+//                     ),
+//                   );
+//                 }).toList(),
+//               ),
+//             ),
+//
+//             const SizedBox(height: 24),
+//
+//             // ── 6 Tajweed Rules Feedback ──
+//             if (_lastResult != null &&
+//                 _lastResult!.rulesFeedback.isNotEmpty) ...[
+//               const Align(
+//                 alignment: Alignment.centerLeft,
+//                 child: Text(
+//                   "Tajweed Analysis",
+//                   style: TextStyle(
+//                       fontSize: 18, fontWeight: FontWeight.bold),
+//                 ),
+//               ),
+//               const SizedBox(height: 12),
+//               ..._lastResult!.rulesFeedback.entries.map((entry) {
+//                 return Container(
+//                   margin: const EdgeInsets.only(bottom: 10),
+//                   padding: const EdgeInsets.all(12),
+//                   decoration: BoxDecoration(
+//                     color: Colors.grey[50],
+//                     borderRadius: BorderRadius.circular(10),
+//                     border: Border.all(color: Colors.grey[200]!),
+//                   ),
+//                   child: Row(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Icon(
+//                         _ruleIcon(entry.key),
+//                         color: const Color(0xFF1D0835),
+//                         size: 20,
+//                       ),
+//                       const SizedBox(width: 10),
+//                       Expanded(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Text(
+//                               _ruleTitle(entry.key),
+//                               style: const TextStyle(
+//                                 fontSize: 13,
+//                                 fontWeight: FontWeight.bold,
+//                                 color: Color(0xFF1D0835),
+//                               ),
+//                             ),
+//                             const SizedBox(height: 4),
+//                             Text(
+//                               entry.value,
+//                               style: const TextStyle(
+//                                   fontSize: 13, color: Colors.black87),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               }),
+//               const SizedBox(height: 16),
+//             ],
+//
+//             // ── Transcribed ──
+//             if (_lastResult != null &&
+//                 _lastResult!.transcribed.isNotEmpty) ...[
+//               Container(
+//                 width: double.infinity,
+//                 padding: const EdgeInsets.all(12),
+//                 decoration: BoxDecoration(
+//                   color: Colors.grey[100],
+//                   borderRadius: BorderRadius.circular(8),
+//                 ),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     const Text("Gemini শুনেছে:",
+//                         style:
+//                         TextStyle(fontSize: 12, color: Colors.grey)),
+//                     const SizedBox(height: 4),
+//                     Text(
+//                       _lastResult!.transcribed,
+//                       style: GoogleFonts.amiri(fontSize: 18),
+//                       textDirection: TextDirection.rtl,
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               const SizedBox(height: 16),
+//             ],
+//
+//             // ── Reset button ──
+//             Center(
+//               child: ElevatedButton.icon(
+//                 onPressed: reset,
+//                 icon: const Icon(Icons.refresh),
+//                 label: const Text("Reset"),
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: const Color(0xFF1D0835),
+//                   foregroundColor: Colors.white,
+//                   padding: const EdgeInsets.symmetric(
+//                       horizontal: 30, vertical: 12),
+//                   shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(30)),
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 100),
+//           ],
+//         ),
+//       ),
+//
+//       // ── Record FAB ──
+//       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+//       floatingActionButton: _isAnalyzing
+//           ? Container(
+//         padding: const EdgeInsets.symmetric(
+//             horizontal: 24, vertical: 14),
+//         decoration: BoxDecoration(
+//           color: Colors.orange,
+//           borderRadius: BorderRadius.circular(30),
+//         ),
+//         child: const Row(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             SizedBox(
+//               width: 18, height: 18,
+//               child: CircularProgressIndicator(
+//                   color: Colors.white, strokeWidth: 2),
+//             ),
+//             SizedBox(width: 10),
+//             Text("AI Analyzing...",
+//                 style:
+//                 TextStyle(color: Colors.white, fontSize: 16)),
+//           ],
+//         ),
+//       )
+//           : ElevatedButton.icon(
+//         onPressed:
+//         isRecording ? stopRecordingAndAnalyze : startRecording,
+//         icon: Icon(isRecording ? Icons.stop : Icons.mic, size: 28),
+//         label: Text(
+//           isRecording ? "Stop & Check" : "Start Reciting",
+//           style: const TextStyle(fontSize: 16),
+//         ),
+//         style: ElevatedButton.styleFrom(
+//           padding: const EdgeInsets.symmetric(
+//               horizontal: 40, vertical: 16),
+//           backgroundColor:
+//           isRecording ? Colors.red : const Color(0xFF1D0835),
+//           foregroundColor: Colors.white,
+//           shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(30)),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _recorder.closeRecorder();
+//     _animationController.dispose();
+//     super.dispose();
+//   }
+
+// import 'dart:async';
+// import 'dart:convert';
+// import 'dart:io';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:path_provider/path_provider.dart';
+// import 'package:flutter_sound/flutter_sound.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:audioplayers/audioplayers.dart'; // সাউন্ডের জন্য
+//
+// void main() {
+//   runApp(const GetMaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     home: QuranRecitationScreen(),
+//   ));
+// }
+//
+// class TajweedResult {
+//   final List<String> wrongWords;
+//   final String transcribed;
+//   final int score;
+//   final Map<String, String> rulesFeedback;
+//
+//   TajweedResult({
+//     required this.wrongWords,
+//     required this.transcribed,
+//     required this.score,
+//     required this.rulesFeedback,
+//   });
+// }
+//
+// enum WordState { unread, correct, wrong, current }
+//
+// class QuranRecitationScreen extends StatefulWidget {
+//   const QuranRecitationScreen({super.key});
+//
+//   @override
+//   State<QuranRecitationScreen> createState() => _QuranRecitationScreenState();
+// }
+//
+// class _QuranRecitationScreenState extends State<QuranRecitationScreen>
+//     with SingleTickerProviderStateMixin {
+//
+//   static const String _geminiApiKey = 'YOUR_GEMINI_KEY';
+//   static const String _whisperApiKey = ' Zp5vdXs0eWfcA';
+//   static const int _chunkIntervalSeconds = 5;
+//
+//   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+//   final AudioPlayer _audioPlayer = AudioPlayer(); // সাউন্ড প্লেয়ার
+//
+//   bool _recorderInitialized = false;
+//   bool isRecording = false;
+//   String statusMessage = "";
+//   String? _recordedFilePath;
+//
+//   Timer? _chunkTimer;
+//   int _currentWordIndex = 0;
+//
+//   // সঠিক সূরা ফাতিহা লিস্ট
+//   final List<String> arabicAyat = [
+//     'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+//     'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+//     'الرَّحْمَٰنِ الرَّحِيمِ',
+//     'مَالِكِ يَوْمِ الدِّينِ',
+//     'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+//     'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+//     'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+//   ];
+//
+//   late List<String> referenceWords;
+//   late List<WordState> wordStates;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _buildWordList();
+//     _initRecorder();
+//   }
+//
+//   void _buildWordList() {
+//     referenceWords = [];
+//     for (var ayah in arabicAyat) {
+//       referenceWords.addAll(ayah.split(' '));
+//     }
+//     wordStates = List.generate(referenceWords.length, (_) => WordState.unread);
+//   }
+//
+//   Future<void> _initRecorder() async {
+//     final status = await Permission.microphone.request();
+//     if (status.isGranted) {
+//       await _recorder.openRecorder();
+//       setState(() => _recorderInitialized = true);
+//     }
+//   }
+//
+//   // ভুল হলে সাউন্ড বাজানোর ফাংশন
+//   void _playErrorSound() async {
+//     try {
+//       await _audioPlayer.play(AssetSource('sounds/wrong_answer.wav'));
+//     } catch (e) {
+//       debugPrint("Sound error: $e");
+//     }
+//   }
+//
+//   Future<void> startRecording() async {
+//     if (!_recorderInitialized) return;
+//
+//     final dir = await getTemporaryDirectory();
+//     _recordedFilePath = '${dir.path}/full_recitation.m4a';
+//
+//     await _recorder.startRecorder(
+//       toFile: _recordedFilePath,
+//       codec: Codec.aacMP4,
+//       sampleRate: 16000,
+//       numChannels: 1,
+//     );
+//
+//     setState(() {
+//       isRecording = true;
+//       _currentWordIndex = 0;
+//       wordStates = List.generate(referenceWords.length, (_) => WordState.unread);
+//       if (wordStates.isNotEmpty) wordStates[0] = WordState.current;
+//       statusMessage = "Reciting...";
+//     });
+//
+//     _chunkTimer = Timer.periodic(const Duration(seconds: _chunkIntervalSeconds), (_) => _analyzeChunkRealtime());
+//   }
+//
+//   Future<void> _analyzeChunkRealtime() async {
+//     if (!isRecording || _recordedFilePath == null) return;
+//
+//     try {
+//       final oldPath = _recordedFilePath!;
+//       await _recorder.stopRecorder();
+//
+//       final dir = await getTemporaryDirectory();
+//       _recordedFilePath = '${dir.path}/rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
+//
+//       await _recorder.startRecorder(
+//         toFile: _recordedFilePath,
+//         codec: Codec.aacMP4,
+//         sampleRate: 16000,
+//       );
+//
+//       final transcribed = await _transcribeWithWhisper(oldPath);
+//       if (transcribed.isNotEmpty) {
+//         _updateWordHighlightsRealtime(transcribed);
+//       }
+//     } catch (e) {
+//       debugPrint('Chunk error: $e');
+//     }
+//   }
+//
+//   Future<String> _transcribeWithWhisper(String audioPath) async {
+//     try {
+//       var request = http.MultipartRequest('POST', Uri.parse('https://api.openai.com/v1/audio/transcriptions'));
+//       request.headers['Authorization'] = 'Bearer $_whisperApiKey';
+//       request.fields['model'] = 'whisper-1';
+//       request.fields['language'] = 'ar';
+//       request.files.add(await http.MultipartFile.fromPath('file', audioPath, filename: 'audio.m4a'));
+//
+//       var response = await http.Response.fromStream(await request.send());
+//       if (response.statusCode == 200) {
+//         return jsonDecode(response.body)['text'] ?? '';
+//       }
+//     } catch (e) {
+//       debugPrint('Whisper Error: $e');
+//     }
+//     return '';
+//   }
+//
+//   void _updateWordHighlightsRealtime(String transcribed) {
+//     final heardWords = transcribed.trim().split(RegExp(r'\s+'));
+//     bool foundError = false;
+//
+//     setState(() {
+//       for (var tw in heardWords) {
+//         if (_currentWordIndex >= referenceWords.length) break;
+//
+//         String ref = _removeHarakat(referenceWords[_currentWordIndex]);
+//         String trans = _removeHarakat(tw);
+//
+//         if (ref == trans || ref.contains(trans) || trans.contains(ref)) {
+//           wordStates[_currentWordIndex] = WordState.correct;
+//         } else {
+//           wordStates[_currentWordIndex] = WordState.wrong;
+//           foundError = true;
+//         }
+//         _currentWordIndex++;
+//         if (_currentWordIndex < referenceWords.length) {
+//           wordStates[_currentWordIndex] = WordState.current;
+//         }
+//       }
+//     });
+//
+//     if (foundError) {
+//       _playErrorSound();
+//     }
+//   }
+//
+//   String _removeHarakat(String text) =>
+//       text.replaceAll(RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]'), '').trim();
+//
+//   Future<void> stopRecordingAndAnalyze() async {
+//     _chunkTimer?.cancel();
+//     await _recorder.stopRecorder();
+//     setState(() => isRecording = false);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: const Color(0xFFFAF7F0),
+//       appBar: AppBar(
+//         title: const Text("Surah Fatiha AI Check", style: TextStyle(color: Colors.white)),
+//         centerTitle: true,
+//         backgroundColor: const Color(0xFF1D0835),
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(25),
+//         child: Center(
+//           child: Wrap(
+//             alignment: WrapAlignment.end,
+//             spacing: 12,
+//             runSpacing: 20,
+//             textDirection: TextDirection.rtl,
+//             children: referenceWords.asMap().entries.map((e) {
+//               return _buildWordWidget(e.value, wordStates[e.key]);
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton.extended(
+//         onPressed: isRecording ? stopRecordingAndAnalyze : startRecording,
+//         label: Text(isRecording ? "Stop" : "Start Reciting"),
+//         icon: Icon(isRecording ? Icons.stop : Icons.mic),
+//         backgroundColor: isRecording ? Colors.red : const Color(0xFF1D0835),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildWordWidget(String word, WordState state) {
+//     // Opacity অনেক কম রাখা হয়েছে যাতে hide মনে হয়
+//     double opacity = 0.5;
+//     Color textColor = Colors.black45;
+//     FontWeight weight = FontWeight.normal;
+//
+//     if (state == WordState.correct) {
+//       opacity = 1.0;
+//       textColor = Colors.green[700]!;
+//       weight = FontWeight.bold;
+//     } else if (state == WordState.wrong) {
+//       opacity = 1.0;
+//       textColor = Colors.red[700]!;
+//       weight = FontWeight.bold;
+//     } else if (state == WordState.current) {
+//       opacity = 1.0;
+//       textColor = Colors.blue[800]!;
+//       weight = FontWeight.bold;
+//     }
+//
+//     return AnimatedOpacity(
+//       duration: const Duration(milliseconds: 500),
+//       opacity: opacity,
+//       child: Text(
+//         word,
+//         style: GoogleFonts.amiri(fontSize: 32, color: textColor, fontWeight: weight),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _chunkTimer?.cancel();
+//     _recorder.closeRecorder();
+//     _audioPlayer.dispose();
+//     super.dispose();
+//   }
+// }
+
+//
+// import 'dart:async';
+// import 'dart:convert';
+// import 'dart:io';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:path_provider/path_provider.dart';
+// import 'package:flutter_sound/flutter_sound.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:audioplayers/audioplayers.dart';
+//
+// void main() {
+//   runApp(const GetMaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     home: QuranRecitationScreen(),
+//   ));
+// }
+//
+// enum WordState { unread, correct, wrong, current }
+//
+//
+// class QuranRecitationScreen extends StatefulWidget {
+//   const QuranRecitationScreen({super.key});
+//
+//   @override
+//   State<QuranRecitationScreen> createState() => _QuranRecitationScreenState();
+// }
+//
+// class _QuranRecitationScreenState extends State<QuranRecitationScreen>
+//     with SingleTickerProviderStateMixin {
+//
+//   static const String _whisperApiKey = '  fcA'; // আপনার কি এখানে দিন
+//   static const int _chunkIntervalSeconds = 5;
+//
+//   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+//   final AudioPlayer _audioPlayer = AudioPlayer();
+//
+//   bool _recorderInitialized = false;
+//   bool isRecording = false;
+//   String? _recordedFilePath;
+//
+//   Timer? _chunkTimer;
+//   int _currentWordIndex = 0;
+//
+//   final List<String> arabicAyat = [
+//     'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+//     'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+//     'الرَّحْمَٰنِ الرَّحِيمِ',
+//     'مَالِكِ يَوْمِ الدِّينِ',
+//     'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+//     'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+//     'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+//   ];
+//
+//   late List<String> referenceWords;
+//   late List<WordState> wordStates;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _buildWordList();
+//     _initRecorder();
+//   }
+//
+//   void _buildWordList() {
+//     referenceWords = [];
+//     for (var ayah in arabicAyat) {
+//       referenceWords.addAll(ayah.split(' '));
+//     }
+//     wordStates = List.generate(referenceWords.length, (_) => WordState.unread);
+//   }
+//
+//   Future<void> _initRecorder() async {
+//     final status = await Permission.microphone.request();
+//     if (status.isGranted) {
+//       await _recorder.openRecorder();
+//       setState(() => _recorderInitialized = true);
+//     }
+//   }
+//
+//   void _playErrorSound() async {
+//     try {
+//       await _audioPlayer.play(AssetSource('sounds/wrong_answer.wav'));
+//     } catch (e) {
+//       debugPrint("Sound error: $e");
+//     }
+//   }
+//
+//   Future<void> startRecording() async {
+//     if (!_recorderInitialized) return;
+//
+//     final dir = await getTemporaryDirectory();
+//     _recordedFilePath = '${dir.path}/rec.m4a';
+//
+//     await _recorder.startRecorder(
+//       toFile: _recordedFilePath,
+//       codec: Codec.aacMP4,
+//       sampleRate: 16000,
+//       numChannels: 1,
+//     );
+//
+//     setState(() {
+//       isRecording = true;
+//       _currentWordIndex = 0;
+//       wordStates = List.generate(referenceWords.length, (_) => WordState.unread);
+//       if (wordStates.isNotEmpty) wordStates[0] = WordState.current;
+//     });
+//
+//     _chunkTimer = Timer.periodic(const Duration(seconds: _chunkIntervalSeconds), (_) => _analyzeChunkRealtime());
+//   }
+//
+//   Future<void> _analyzeChunkRealtime() async {
+//     if (!isRecording || _recordedFilePath == null) return;
+//
+//     try {
+//       final oldPath = _recordedFilePath!;
+//       await _recorder.stopRecorder();
+//
+//       final dir = await getTemporaryDirectory();
+//       _recordedFilePath = '${dir.path}/rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
+//
+//       await _recorder.startRecorder(toFile: _recordedFilePath, codec: Codec.aacMP4);
+//
+//       final transcribed = await _transcribeWithWhisper(oldPath);
+//       if (transcribed.isNotEmpty) {
+//         // কনসোলে দেখা যাবে আপনি কী বলেছেন
+//         debugPrint("🎤 AI Heard: $transcribed");
+//         _updateWordHighlightsRealtime(transcribed);
+//       }
+//     } catch (e) {
+//       debugPrint('Chunk error: $e');
+//     }
+//   }
+//
+//   Future<String> _transcribeWithWhisper(String audioPath) async {
+//     try {
+//       var request = http.MultipartRequest('POST', Uri.parse('https://api.openai.com/v1/audio/transcriptions'));
+//       request.headers['Authorization'] = 'Bearer $_whisperApiKey';
+//       request.fields['model'] = 'whisper-1';
+//       request.fields['language'] = 'ar';
+//       request.fields['prompt'] = 'Surah Al-Fatiha recitation';
+//       request.files.add(await http.MultipartFile.fromPath('file', audioPath, filename: 'audio.m4a'));
+//
+//       var response = await http.Response.fromStream(await request.send());
+//       if (response.statusCode == 200) {
+//         return jsonDecode(response.body)['text'] ?? '';
+//       }
+//     } catch (e) {
+//       debugPrint('Whisper Error: $e');
+//     }
+//     return '';
+//   }
+//
+//   void _updateWordHighlightsRealtime(String transcribed) {
+//     final heardWords = transcribed.trim().split(RegExp(r'\s+'));
+//     bool foundError = false;
+//
+//     setState(() {
+//       for (var tw in heardWords) {
+//         if (_currentWordIndex >= referenceWords.length) break;
+//
+//         String ref = _removeHarakat(referenceWords[_currentWordIndex]);
+//         String trans = _removeHarakat(tw);
+//
+//         // একটু নমনীয় ম্যাচিং লজিক (রিয়েল-টাইম এর জন্য ভালো)
+//         if (ref == trans || ref.contains(trans) || trans.contains(ref)) {
+//           wordStates[_currentWordIndex] = WordState.correct;
+//         } else {
+//           wordStates[_currentWordIndex] = WordState.wrong;
+//           foundError = true;
+//         }
+//         _currentWordIndex++;
+//         if (_currentWordIndex < referenceWords.length) {
+//           wordStates[_currentWordIndex] = WordState.current;
+//         }
+//       }
+//     });
+//
+//     if (foundError) {
+//       _playErrorSound();
+//     }
+//   }
+//
+//   String _removeHarakat(String text) =>
+//       text.replaceAll(RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]'), '').trim();
+//
+//   Future<void> stopRecordingAndAnalyze() async {
+//     _chunkTimer?.cancel();
+//     await _recorder.stopRecorder();
+//     setState(() => isRecording = false);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: const Color(0xFFFAF7F0),
+//       appBar: AppBar(
+//         title: const Text("সূরা ফাতিহা তাজবীদ চেক", style: TextStyle(color: Colors.white)),
+//         centerTitle: true,
+//         backgroundColor: const Color(0xFF1D0835),
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(25),
+//         child: Center(
+//           child: Wrap(
+//             alignment: WrapAlignment.end,
+//             spacing: 12,
+//             runSpacing: 25, // সঠিক শব্দ দেখানোর জন্য গ্যাপ বাড়ানো হয়েছে
+//             textDirection: TextDirection.rtl,
+//             children: referenceWords.asMap().entries.map((e) {
+//               return _buildWordWidget(e.value, wordStates[e.key]);
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton.extended(
+//         onPressed: isRecording ? stopRecordingAndAnalyze : startRecording,
+//         label: Text(isRecording ? "Stop" : "Start Reciting"),
+//         icon: Icon(isRecording ? Icons.stop : Icons.mic),
+//         backgroundColor: isRecording ? Colors.red : const Color(0xFF1D0835),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildWordWidget(String word, WordState state) {
+//     double opacity = 0.1; // ডিফল্ট অপাসিটি কমিয়ে ০.১ করা হয়েছে (Hide effect)
+//     Color textColor = Colors.black45;
+//     bool isWrong = (state == WordState.wrong);
+//
+//     if (state == WordState.correct) {
+//       opacity = 1.0;
+//       textColor = Colors.green[700]!;
+//     } else if (isWrong) {
+//       opacity = 1.0;
+//       textColor = Colors.red[700]!;
+//     } else if (state == WordState.current) {
+//       opacity = 1.0;
+//       textColor = Colors.blue[800]!;
+//     }
+//
+//     return Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         AnimatedOpacity(
+//           duration: const Duration(milliseconds: 500),
+//           opacity: opacity,
+//           child: Text(
+//             word,
+//             style: GoogleFonts.amiri(
+//                 fontSize: 32,
+//                 color: textColor,
+//                 fontWeight: (state == WordState.unread) ? FontWeight.normal : FontWeight.bold
+//             ),
+//           ),
+//         ),
+//         // ভুল হলে নিচে সঠিক শব্দটি ছোট করে দেখাবে
+//         if (isWrong)
+//           Text(
+//             "(সঠিক: $word)",
+//             style: const TextStyle(fontSize: 10, color: Colors.red, fontWeight: FontWeight.bold),
+//           ),
+//       ],
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _chunkTimer?.cancel();
+//     _recorder.closeRecorder();
+//     _audioPlayer.dispose();
+//     super.dispose();
+//   }
+// }
+
+
+
+
+
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:string_similarity/string_similarity.dart';
-
-
-import 'auth/forgot_password_screen.dart';
-import 'bootom_nev_bar.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 void main() {
-  runApp(  const GetMaterialApp(
+  runApp(const GetMaterialApp(
     debugShowCheckedModeBanner: false,
-    home: TicketDownloadScreen(),
-    // home: QuranRecitationScreen(),
+    home: QuranRecitationScreen(),
   ));
 }
+
+enum WordState { unread, correct, wrong, current }
+
 
 class QuranRecitationScreen extends StatefulWidget {
   const QuranRecitationScreen({super.key});
@@ -1946,253 +4376,342 @@ class QuranRecitationScreen extends StatefulWidget {
 
 class _QuranRecitationScreenState extends State<QuranRecitationScreen>
     with SingleTickerProviderStateMixin {
-  final stt.SpeechToText _speech = stt.SpeechToText();
+
+  static const String _whisperApiKey = '  '; // আপনার কি এখানে দিন
+
+  static const int _chunkIntervalSeconds = 5;
+
+  // ── Silence Detection Settings ──────────────────────
+  // file size এর চেয়ে ছোট হলে user চুপ আছে বুঝবে
+  // বেশি false positive → বাড়ান (20000)
+  // কম detect হলে → কমান (8000)
+  static const int _silenceFileSizeThreshold = 12000;
+  static const int _silenceCountToStop = 2;
+  // ───────────────────────────────────────────────────
+
+  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  bool _speechInitialized = false;
-  bool isListening = false;
-  String transcription = "";
-  String currentMode = 'arabic'; // 'arabic' or 'english'
+  bool _recorderInitialized = false;
+  bool isRecording = false;
+  String? _recordedFilePath;
 
-  // সুরা ফাতিহা - আরবি
+  Timer? _chunkTimer;
+  int _currentWordIndex = 0;
+
+  // ── নতুন variables ───────────────────────────────────
+  bool _isSpeaking = false;
+  int _silenceCount = 0;
+  // ─────────────────────────────────────────────────────
+
   final List<String> arabicAyat = [
-    'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-    'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
-    'الرَّحْمَٰنِ الرَّحِيمَ',
-    'مَالِكِ يَوْمِ الدِّينِ',
-    'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
-    'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
-    'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
-  ];
-
-  // ইংরেজি word-by-word ট্রান্সলেশন
-  final List<String> englishAyat = [
-    'In the name of Allah the Most Gracious the Most Merciful',
-    'All praise is due to Allah Lord of the worlds',
-    'The Most Gracious the Most Merciful',
-    'Master of the Day of Judgment',
-    'You alone we worship and You alone we ask for help',
-    'Guide us to the straight path',
-    'The path of those upon whom You have bestowed favor not of those who have evoked anger or of those who are astray',
+    'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+    'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+    'الرَّحْمَٰنِ الرَّحِيمِ',
+    'مَالِكِ يَوْمِ الدِّينِ',
+    'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+    'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+    'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
   ];
 
   late List<String> referenceWords;
-  late List<double> opacityList;
-  late List<bool> isWrongList;
-  late AnimationController _animationController;
+  late List<WordState> wordStates;
 
   @override
   void initState() {
     super.initState();
-    _updateReferenceWords();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-    _initSpeech();
+    _buildWordList();
+    _initRecorder();
   }
 
-  void _updateReferenceWords() {
-    final ayatList = currentMode == 'arabic' ? arabicAyat : englishAyat;
-    referenceWords = ayatList.expand((a) => a.split(' ')).toList();
-    opacityList = List.generate(referenceWords.length, (_) => 0.2); // শুরুতে ফ্যাকাশে
-    isWrongList = List.generate(referenceWords.length, (_) => false);
+  void _buildWordList() {
+    referenceWords = [];
+    for (var ayah in arabicAyat) {
+      referenceWords.addAll(ayah.split(' '));
+    }
+    wordStates = List.generate(referenceWords.length, (_) => WordState.unread);
   }
 
-  Future<void> _initSpeech() async {
-    _speechInitialized = await _speech.initialize(
-      onStatus: (status) => print('Status: $status'),
-      onError: (error) => print('Error: $error'),
-    );
-  }
-
-  Future<void> startListening() async {
-    if (!_speechInitialized) await _initSpeech();
-
-    await _speech.listen(
-      onResult: _onResult,
-      localeId: currentMode == 'arabic' ? 'ar-SA' : 'en-US',
-      partialResults: true,
-      listenFor: const Duration(minutes: 10),
-      pauseFor: const Duration(seconds: 3),
-    );
-
-    setState(() => isListening = true);
-  }
-
-  Future<void> stopListening() async {
-    await _speech.stop();
-    setState(() => isListening = false);
-  }
-
-  void _onResult(SpeechRecognitionResult result) {
-    setState(() {
-      transcription = result.recognizedWords;
-    });
-
-    _processWords(result.recognizedWords);
-  }
-
-  void _processWords(String spoken) {
-    if (spoken.isEmpty) return;
-
-    final spokenWords = spoken.trim().split(RegExp(r'\s+'));
-    isWrongList.fillRange(0, isWrongList.length, false);
-
-    int matched = 0;
-    for (int i = 0; i < referenceWords.length && matched < spokenWords.length; i++) {
-      final target = referenceWords[i].replaceAll(RegExp(r'[ًٌٍَُِّْ]'), '');
-      final similarity = StringSimilarity.compareTwoStrings(
-        target.toLowerCase(),
-        spokenWords[matched].toLowerCase(),
-      );
-
-      setState(() {
-        opacityList[i] = 1.0; // পড়া হলে একদম ক্লিয়ার
-
-        if (similarity < 0.75) {
-          isWrongList[i] = true;
-          _audioPlayer.play(AssetSource('sounds/wrong_answer.wav'));
-          _animationController.forward(from: 0.0); // ভেসে উঠা অ্যানিমেশন
-        } else {
-          matched++; // সঠিক হলে পরের ওয়ার্ডে যাও
-        }
-      });
+  Future<void> _initRecorder() async {
+    final status = await Permission.microphone.request();
+    if (status.isGranted) {
+      await _recorder.openRecorder();
+      setState(() => _recorderInitialized = true);
     }
   }
 
-  void reset() {
+  void _playErrorSound() async {
+    try {
+      await _audioPlayer.play(AssetSource('sounds/wrong_answer.wav'));
+    } catch (e) {
+      debugPrint("Sound error: $e");
+    }
+  }
+
+  Future<void> startRecording() async {
+    if (!_recorderInitialized) return;
+
+    final dir = await getTemporaryDirectory();
+    _recordedFilePath = '${dir.path}/rec.m4a';
+
+    await _recorder.startRecorder(
+      toFile: _recordedFilePath,
+      codec: Codec.aacMP4,
+      sampleRate: 16000,
+      numChannels: 1,
+    );
+
     setState(() {
-      opacityList = List.generate(referenceWords.length, (_) => 0.2);
-      isWrongList = List.generate(referenceWords.length, (_) => false);
-      transcription = "";
+      isRecording = true;
+      _isSpeaking = false;   // ← নতুন
+      _silenceCount = 0;     // ← নতুন
+      _currentWordIndex = 0;
+      wordStates = List.generate(referenceWords.length, (_) => WordState.unread);
+      if (wordStates.isNotEmpty) wordStates[0] = WordState.current;
+    });
+
+    _chunkTimer = Timer.periodic(
+      const Duration(seconds: _chunkIntervalSeconds),
+          (_) => _analyzeChunkRealtime(),
+    );
+  }
+
+  // ── UPDATED: Silence Detection সহ ────────────────────
+  Future<void> _analyzeChunkRealtime() async {
+    if (!isRecording || _recordedFilePath == null) return;
+
+    try {
+      final oldPath = _recordedFilePath!;
+      await _recorder.stopRecorder();
+
+      final dir = await getTemporaryDirectory();
+      _recordedFilePath = '${dir.path}/rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+      await _recorder.startRecorder(
+        toFile: _recordedFilePath,
+        codec: Codec.aacMP4,
+        sampleRate: 16000,
+        numChannels: 1,
+      );
+
+      // ── File size দিয়ে Silence detect ─────────────────
+      final audioFile = File(oldPath);
+      if (!await audioFile.exists()) return;
+
+      final fileSize = await audioFile.length();
+      debugPrint("📁 Chunk size: $fileSize bytes");
+
+      if (fileSize < _silenceFileSizeThreshold) {
+        // User চুপ আছে — Whisper এ পাঠাবো না
+        _silenceCount++;
+        debugPrint("🔇 Silence ($_silenceCount/$_silenceCountToStop)");
+
+        if (_silenceCount >= _silenceCountToStop && _isSpeaking) {
+          setState(() => _isSpeaking = false);
+        }
+        return; // ← এখানেই থামা, কোনো ভুল দেখাবে না ✅
+      }
+
+      // ── User পড়ছে ─────────────────────────────────────
+      _silenceCount = 0;
+      if (!_isSpeaking) setState(() => _isSpeaking = true);
+
+      final transcribed = await _transcribeWithWhisper(oldPath);
+      if (transcribed.isNotEmpty) {
+        debugPrint("🎤 AI Heard: $transcribed");
+        _updateWordHighlightsRealtime(transcribed);
+      }
+    } catch (e) {
+      debugPrint('Chunk error: $e');
+    }
+  }
+
+  Future<String> _transcribeWithWhisper(String audioPath) async {
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse('https://api.openai.com/v1/audio/transcriptions'));
+      request.headers['Authorization'] = 'Bearer $_whisperApiKey';
+      request.fields['model'] = 'whisper-1';
+      request.fields['language'] = 'ar';
+      request.fields['prompt'] = 'Surah Al-Fatiha recitation';
+      request.files.add(await http.MultipartFile.fromPath('file', audioPath, filename: 'audio.m4a'));
+
+      var response = await http.Response.fromStream(await request.send());
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['text'] ?? '';
+      }
+    } catch (e) {
+      debugPrint('Whisper Error: $e');
+    }
+    return '';
+  }
+
+  void _updateWordHighlightsRealtime(String transcribed) {
+    final heardWords = transcribed.trim().split(RegExp(r'\s+'));
+    bool foundError = false;
+
+    setState(() {
+      for (var tw in heardWords) {
+        if (_currentWordIndex >= referenceWords.length) break;
+
+        String ref = _removeHarakat(referenceWords[_currentWordIndex]);
+        String trans = _removeHarakat(tw);
+
+        if (ref == trans || ref.contains(trans) || trans.contains(ref)) {
+          wordStates[_currentWordIndex] = WordState.correct;
+        } else {
+          wordStates[_currentWordIndex] = WordState.wrong;
+          foundError = true;
+        }
+        _currentWordIndex++;
+        if (_currentWordIndex < referenceWords.length) {
+          wordStates[_currentWordIndex] = WordState.current;
+        }
+      }
+    });
+
+    if (foundError) {
+      _playErrorSound();
+    }
+  }
+
+  String _removeHarakat(String text) =>
+      text.replaceAll(RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]'), '').trim();
+
+  Future<void> stopRecordingAndAnalyze() async {
+    _chunkTimer?.cancel();
+    await _recorder.stopRecorder();
+    setState(() {
+      isRecording = false;
+      _isSpeaking = false;   // ← নতুন
+      _silenceCount = 0;     // ← নতুন
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFAF7F0),
       appBar: AppBar(
-        title: const Text("Surah Fatiha real-time check",style: TextStyle(color: Colors.white),),
+        title: const Text("সূরা ফাতিহা তাজবীদ চেক", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: const Color(0xFF1D0835),
-        elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            // মোড সুইচ বাটন
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      currentMode = 'arabic';
-                      _updateReferenceWords();
-                      reset();
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: currentMode == 'arabic' ? Colors.green : Colors.grey,
-                  ),
-                  child: const Text("Arabic mode",style: TextStyle(color: Colors.white),),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      currentMode = 'english';
-                      _updateReferenceWords();
-                      reset();
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: currentMode == 'english' ? Colors.green : Colors.grey,
-                  ),
-                  child: const Text("English mode",style: TextStyle(color: Colors.white),),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Text(
-              isListening ? "Listening..." : "Ready",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "Listening: $transcription",
-              textDirection: TextDirection.rtl,
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 40),
-            // শুধু টেক্সট (কোনো কনটেইনার নেই)
-            Wrap(
-              alignment: WrapAlignment.end,
-              spacing: 16,
-              runSpacing: 20,
-              children: referenceWords.asMap().entries.map((e) {
-                int i = e.key;
-                String word = e.value;
-                bool isWrong = isWrongList[i];
+        padding: const EdgeInsets.all(25),
+        child: Center(
+          child: Wrap(
+            alignment: WrapAlignment.end,
+            spacing: 12,
+            runSpacing: 25,
+            textDirection: TextDirection.rtl,
+            children: referenceWords.asMap().entries.map((e) {
+              return _buildWordWidget(e.value, wordStates[e.key]);
+            }).toList(),
+          ),
+        ),
+      ),
 
-                return ScaleTransition(
-                  scale: Tween<double>(begin: 1.0, end: isWrong ? 1.4 : 1.0).animate(
-                    CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+      // ── UPDATED FAB — Speaking Indicator সহ ────────────
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+
+          // Speaking / Silence Badge
+          if (isRecording)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: _isSpeaking ? Colors.green.shade600 : Colors.grey.shade600,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: (_isSpeaking ? Colors.green : Colors.grey).withOpacity(0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
                   ),
-                  child: AnimatedOpacity(
-                    opacity: opacityList[i],
-                    duration: const Duration(milliseconds: 600),
-                    child: Text(
-                      "$word ",
-                      style: GoogleFonts.amiri(
-                        fontSize: isWrong ? 36 : 28,
-                        color: isWrong ? Colors.red[900] : Colors.black87,
-                        fontWeight: isWrong ? FontWeight.bold : FontWeight.normal,
-                      ),
-                      textDirection: TextDirection.rtl,
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _isSpeaking ? Icons.graphic_eq : Icons.mic_off,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _isSpeaking ? "পড়ছেন..." : "চুপ আছেন...",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 50),
-
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: reset,
-                child: const Text("Reset"),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ElevatedButton.icon(
-        onPressed: isListening ? stopListening : startListening,
-        icon: Icon(isListening ? Icons.stop : Icons.mic, size: 32),
-        label: Text(
-          isListening ? "Stop." : "Start.",
-          style: const TextStyle(fontSize: 18),
-        ),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          backgroundColor: isListening ? Colors.red : Colors.orange,
-          foregroundColor: Colors.white,
-        ),
+
+          // Main FAB
+          FloatingActionButton.extended(
+            onPressed: isRecording ? stopRecordingAndAnalyze : startRecording,
+            label: Text(isRecording ? "Stop" : "Start Reciting"),
+            icon: Icon(isRecording ? Icons.stop : Icons.mic),
+            backgroundColor: isRecording ? Colors.red : const Color(0xFF1D0835),
+          ),
+        ],
       ),
     );
+  }
 
+  Widget _buildWordWidget(String word, WordState state) {
+    double opacity = 0.1;
+    Color textColor = Colors.black45;
+    bool isWrong = (state == WordState.wrong);
+
+    if (state == WordState.correct) {
+      opacity = 1.0;
+      textColor = Colors.green[700]!;
+    } else if (isWrong) {
+      opacity = 1.0;
+      textColor = Colors.red[700]!;
+    } else if (state == WordState.current) {
+      opacity = 1.0;
+      textColor = Colors.blue[800]!;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 500),
+          opacity: opacity,
+          child: Text(
+            word,
+            style: GoogleFonts.amiri(
+                fontSize: 32,
+                color: textColor,
+                fontWeight: (state == WordState.unread) ? FontWeight.normal : FontWeight.bold
+            ),
+          ),
+        ),
+        if (isWrong)
+          Text(
+            "(সঠিক: $word)",
+            style: const TextStyle(fontSize: 10, color: Colors.red, fontWeight: FontWeight.bold),
+          ),
+      ],
+    );
   }
 
   @override
   void dispose() {
+    _chunkTimer?.cancel();
+    _recorder.closeRecorder();
     _audioPlayer.dispose();
-    _animationController.dispose();
     super.dispose();
   }
 }
